@@ -1,0 +1,9 @@
+resources:
+  - url: http://127.0.0.1:5000/nrk-news-card.js
+    type: module
+views:
+  - cards:
+      - type: custom:nrk-news-card
+        name: nrk-news Card Development
+        entity: sun.sun
+        test_gui: true
