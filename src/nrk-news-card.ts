@@ -65,8 +65,9 @@ export class NrkNewsCard extends LitElement {
     if (!this._config || !this.hass) {
       return html``;
     }
-    const state = this.hass.states['sensor.yr_forecast'];
-    console.log('*** state', state.attributes.forecast);
+    const state = this.hass.states[this._config.entity];
+
+    const entry = state.attributes.entries[0];
 
     // TODO Check for stateObj or other necessary things and render a warning if missing
     if (this._config.show_warning) {
@@ -87,29 +88,37 @@ export class NrkNewsCard extends LitElement {
         })}
         tabindex="0"
         aria-label=${`NRK news: ${this._config.entity}`}
+        style="padding:10px;"
       >
         <ha-card>
-          <table style="width: 100%">
+          <table>
             <tr>
-              ${state.attributes.forecast.slice(0, 5).map(entity => {
-                return html`
-                  <td style="padding:24px;">
-                    <div class="period">${dayjs(entity.from).format('HH')} - ${dayjs(entity.to).format('HH')}</div>
-                    <img height="50px" src="https://www.yr.no/grafikk/sym/v2016/png/100/${entity.symbolVar}.png" />
-                    <div class="temperature">${entity.temperature}&deg;</div>
-                    ${entity.precipitation === 0
-                      ? html`
-                          <div>${entity.precipitation} mm</div>
-                        `
-                      : html``}
-                  </td>
-                `;
-              })}
+              <td colspan="2">
+                <div class="title">${entry.title}</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="vertical-align: top;">
+                <div class="summary">${entry.summary}</div>
+              </td>
+              <td style="vertical-align: top;">
+                <div>${this.getImage(entry.links)}</div>
+              </td>
             </tr>
           </table>
         </ha-card>
       </ha-card>
     `;
+  }
+
+  private getImage(links): TemplateResult {
+    const image = links.find(link => link.type === 'image/jpeg');
+    if (image) {
+      return html`
+        <img class="image" src="${image.href}" />
+      `;
+    }
+    return html``;
   }
 
   private _handleAction(ev: ActionHandlerEvent): void {
@@ -126,13 +135,16 @@ export class NrkNewsCard extends LitElement {
         background-color: #fce588;
         padding: 8px;
       }
-      .period {
-        font-size: 0.8rem;
+      .title {
+        font-size: 2rem;
       }
-      .temperature {
-        font-size: 1.8em;
-        font-weight: 300;
-        text-align: center;
+      .summary {
+      }
+      .image {
+        max-width: 200px;
+        max-height: 145px;
+        border-radius: 4px;
+        margin-left: 10px;
       }
     `;
   }
