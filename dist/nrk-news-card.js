@@ -3420,11 +3420,6 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
     constructor() {
         super();
         this.entryNumber = 0;
-        setTimeout(() => {
-            this.nextEntry();
-            console.log('*** this.entryNumber', this.entryNumber);
-            this.requestUpdate();
-        }, 5000);
     }
     static async getConfigElement() {
         return document.createElement('nrk-news-card-editor');
@@ -3459,6 +3454,11 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
         </ha-card>
       `;
         }
+        setTimeout(() => {
+            this.nextEntry();
+            console.log('*** this.entryNumber', this.entryNumber);
+            this.requestUpdate();
+        }, 15000);
         console.log('***', entry);
         moment.locale('nb');
         return html `
@@ -3520,10 +3520,10 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
         padding: 8px;
       }
       .title {
-        font-size: 2rem;
+        font-size: 3.1vw;
         padding-bottom: 4px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
         white-space: nowrap;
       }
       .summary {

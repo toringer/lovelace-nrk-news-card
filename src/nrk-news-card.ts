@@ -32,12 +32,6 @@ console.info(
 export class NrkNewsCard extends LitElement {
   constructor() {
     super();
-
-    setTimeout(() => {
-      this.nextEntry();
-      console.log('*** this.entryNumber', this.entryNumber);
-      this.requestUpdate();
-    }, 5000);
   }
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('nrk-news-card-editor') as LovelaceCardEditor;
@@ -89,6 +83,12 @@ export class NrkNewsCard extends LitElement {
         </ha-card>
       `;
     }
+
+    setTimeout(() => {
+      this.nextEntry();
+      console.log('*** this.entryNumber', this.entryNumber);
+      this.requestUpdate();
+    }, 15000);
 
     console.log('***', entry);
     moment.locale('nb');
@@ -159,10 +159,10 @@ export class NrkNewsCard extends LitElement {
         padding: 8px;
       }
       .title {
-        font-size: 2rem;
+        font-size: 3.1vw;
         padding-bottom: 4px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
         white-space: nowrap;
       }
       .summary {
