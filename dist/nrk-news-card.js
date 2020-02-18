@@ -3415,7 +3415,6 @@ function localize(string, search = '', replace = '') {
 
 /* eslint no-console: 0 */
 console.info(`%c  NRK-NEWS-CARD %c ${CARD_VERSION} `, 'color: white; font-weight: bold; background: black', 'color: white; font-weight: bold; background: dimgray');
-// TODO Name your custom element
 let NrkNewsCard = class NrkNewsCard extends LitElement {
     constructor() {
         super();
@@ -3429,7 +3428,7 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
     }
     setConfig(config) {
         // TODO Check for required fields and that they are of the proper format
-        if (!config || config.show_error) {
+        if (!config) {
             throw new Error(localize('common.invalid_configuration'));
         }
         if (config.test_gui) {
@@ -3459,7 +3458,7 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
             console.log('*** this.entryNumber', this.entryNumber);
             this.requestUpdate();
         }, 15000);
-        console.log('***', entry);
+        //console.log('***', entry);
         moment.locale('nb');
         return html `
       <ha-card
@@ -3520,7 +3519,7 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
         padding: 8px;
       }
       .title {
-        font-size: 2rem;
+        font-size: 1.5rem;
         padding-bottom: 4px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -3529,16 +3528,20 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
       .summary {
         font-size: 1.2rem;
         font-weight: 300;
-        height: 8rem;
+        height: 6.1em;
+        overflow: hidden;
       }
       .image {
-        max-width: 100%;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
+        object-fit: cover;
+        height: 130px;
+        width: 100%;
       }
       .published {
         text-align: right;
         font-size: 0.8rem;
+        margin-top: 4px;
       }
     `;
     }
