@@ -10,6 +10,7 @@ import {
   getLovelace,
 } from 'custom-card-helpers';
 import dayjs from 'dayjs';
+import moment from 'moment-with-locales-es6';
 
 import './editor';
 
@@ -61,13 +62,15 @@ export class NrkNewsCard extends LitElement {
     return hasConfigOrEntityChanged(this, changedProps, false);
   }
 
+  protected entryNumber = 0;
+  protected state;
+
   protected render(): TemplateResult | void {
     if (!this._config || !this.hass) {
       return html``;
     }
-    const state = this.hass.states[this._config.entity];
-
-    const entry = state.attributes.entries[0];
+    this.state = this.hass.states[this._config.entity];
+    const entry = this.state.attributes.entries[this.entryNumber];
 
     // TODO Check for stateObj or other necessary things and render a warning if missing
     if (this._config.show_warning) {
@@ -77,6 +80,15 @@ export class NrkNewsCard extends LitElement {
         </ha-card>
       `;
     }
+
+    setTimeout(() => {
+      this.nextEntry();
+      console.log('*** this.entryNumber', this.entryNumber);
+      this.requestUpdate();
+    }, 5000);
+
+    console.log('***', entry);
+    moment.locale('nb');
 
     return html`
       <ha-card
@@ -88,24 +100,17 @@ export class NrkNewsCard extends LitElement {
         })}
         tabindex="0"
         aria-label=${`NRK news: ${this._config.entity}`}
-        style="padding:10px;"
+        style=""
       >
         <ha-card>
-          <table>
-            <tr>
-              <td colspan="2">
-                <div class="title">${entry.title}</div>
-              </td>
-            </tr>
-            <tr>
-              <td style="vertical-align: top;">
-                <div class="summary">${entry.summary}</div>
-              </td>
-              <td style="vertical-align: top;">
-                <div>${this.getImage(entry.links)}</div>
-              </td>
-            </tr>
-          </table>
+          ${this.getImage(entry.links)}
+          <div style="padding:10px;">
+            <div class="title">${entry.title}</div>
+            <div class="summary">${entry.summary}</div>
+            <div class="published">
+              ${moment(entry.published).fromNow()}
+            </div>
+          </div>
         </ha-card>
       </ha-card>
     `;
@@ -121,9 +126,22 @@ export class NrkNewsCard extends LitElement {
     return html``;
   }
 
+  private nextEntry(): void {
+    if (this.entryNumber >= this.state.attributes.entries.length - 1) {
+      this.entryNumber = 0;
+    } else {
+      this.entryNumber++;
+    }
+  }
+
   private _handleAction(ev: ActionHandlerEvent): void {
+    console.log('*** _handleAction');
+
+    this.nextEntry();
+    this.requestUpdate();
+
     if (this.hass && this._config && ev.detail.action) {
-      handleAction(this, this.hass, this._config, ev.detail.action);
+      //handleAction(this, this.hass, this._config, ev.detail.action);
     }
   }
 
@@ -137,14 +155,24 @@ export class NrkNewsCard extends LitElement {
       }
       .title {
         font-size: 2rem;
+        padding-bottom: 4px;
       }
       .summary {
       }
       .image {
-        max-width: 200px;
-        max-height: 145px;
-        border-radius: 4px;
-        margin-left: 10px;
+        max-width: 100%;
+        // max-height: 145px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        // margin-left: 10px;
+      }
+      .published {
+        text-align: right;
+        // position: absolute;
+        // top: 18px;
+        // padding-left: 10px;
+        // font-size: 1.1em;
+        // right: 15px;
       }
     `;
   }

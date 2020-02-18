@@ -19,7 +19,8 @@
     "dayjs": "^1.8.20",
     "home-assistant-js-websocket": "^4.4.0",
     "lit-element": "^2.2.1",
-    "lit-html": "^1.1.2"
+    "lit-html": "^1.1.2",
+    "moment-with-locales-es6": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
