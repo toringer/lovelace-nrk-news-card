@@ -159,10 +159,10 @@ export class NrkNewsCard extends LitElement {
         padding: 8px;
       }
       .title {
-        font-size: 3.1vw;
+        font-size: 2rem;
         padding-bottom: 4px;
-        // overflow: hidden;
-        // text-overflow: ellipsis;
+        overflow: hidden;
+        text-overflow: ellipsis;
         white-space: nowrap;
       }
       .summary {
