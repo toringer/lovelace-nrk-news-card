@@ -30,6 +30,15 @@ console.info(
 // TODO Name your custom element
 @customElement('nrk-news-card')
 export class NrkNewsCard extends LitElement {
+  constructor() {
+    super();
+
+    setTimeout(() => {
+      this.nextEntry();
+      console.log('*** this.entryNumber', this.entryNumber);
+      this.requestUpdate();
+    }, 5000);
+  }
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('nrk-news-card-editor') as LovelaceCardEditor;
   }
@@ -81,12 +90,6 @@ export class NrkNewsCard extends LitElement {
       `;
     }
 
-    setTimeout(() => {
-      this.nextEntry();
-      console.log('*** this.entryNumber', this.entryNumber);
-      this.requestUpdate();
-    }, 5000);
-
     console.log('***', entry);
     moment.locale('nb');
 
@@ -123,7 +126,9 @@ export class NrkNewsCard extends LitElement {
         <img class="image" src="${image.href}" />
       `;
     }
-    return html``;
+    return html`
+      <img class="image" src="https://gfx.nrk.no/MypkihdsBkCYb-cXvwW8BgLqqp7OO7Fkyj8B_mXoY4Ew" />
+    `;
   }
 
   private nextEntry(): void {
@@ -156,23 +161,23 @@ export class NrkNewsCard extends LitElement {
       .title {
         font-size: 2rem;
         padding-bottom: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .summary {
+        font-size: 1.2rem;
+        font-weight: 300;
+        height: 8rem;
       }
       .image {
         max-width: 100%;
-        // max-height: 145px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
-        // margin-left: 10px;
       }
       .published {
         text-align: right;
-        // position: absolute;
-        // top: 18px;
-        // padding-left: 10px;
-        // font-size: 1.1em;
-        // right: 15px;
+        font-size: 0.8rem;
       }
     `;
   }
