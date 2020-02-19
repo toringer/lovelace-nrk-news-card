@@ -3418,13 +3418,22 @@ console.info(`%c  NRK-NEWS-CARD %c ${CARD_VERSION} `, 'color: white; font-weight
 let NrkNewsCard = class NrkNewsCard extends LitElement {
     constructor() {
         super();
-        this.entryNumber = 0;
+        this._entryNumber = 0;
+        moment.locale('nb');
+        this.setTimeout();
     }
     static async getConfigElement() {
         return document.createElement('nrk-news-card-editor');
     }
     static getStubConfig() {
         return {};
+    }
+    setTimeout() {
+        setTimeout(() => {
+            this.nextEntry();
+            console.log('*** this.entryNumber', this._entryNumber);
+            this.setTimeout();
+        }, 15000);
     }
     setConfig(config) {
         // TODO Check for required fields and that they are of the proper format
@@ -3444,7 +3453,7 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
             return html ``;
         }
         this.state = this.hass.states[this._config.entity];
-        const entry = this.state.attributes.entries[this.entryNumber];
+        const entry = this.state.attributes.entries[this._entryNumber];
         // TODO Check for stateObj or other necessary things and render a warning if missing
         if (this._config.show_warning) {
             return html `
@@ -3453,13 +3462,8 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
         </ha-card>
       `;
         }
-        setTimeout(() => {
-            this.nextEntry();
-            console.log('*** this.entryNumber', this.entryNumber);
-            this.requestUpdate();
-        }, 15000);
+        console.log('*** render');
         //console.log('***', entry);
-        moment.locale('nb');
         return html `
       <ha-card
         @action=${this._handleAction}
@@ -3497,18 +3501,15 @@ let NrkNewsCard = class NrkNewsCard extends LitElement {
     `;
     }
     nextEntry() {
-        if (this.entryNumber >= this.state.attributes.entries.length - 1) {
-            this.entryNumber = 0;
+        if (this._entryNumber >= this.state.attributes.entries.length - 1) {
+            this._entryNumber = 0;
         }
         else {
-            this.entryNumber++;
+            this._entryNumber++;
         }
     }
-    _handleAction(ev) {
-        console.log('*** _handleAction');
+    _handleAction() {
         this.nextEntry();
-        this.requestUpdate();
-        if (this.hass && this._config && ev.detail.action) ;
     }
     static get styles() {
         return css `
@@ -3552,6 +3553,9 @@ __decorate([
 __decorate([
     property()
 ], NrkNewsCard.prototype, "_config", void 0);
+__decorate([
+    property()
+], NrkNewsCard.prototype, "_entryNumber", void 0);
 NrkNewsCard = __decorate([
     customElement('nrk-news-card')
 ], NrkNewsCard);

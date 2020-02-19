@@ -28,7 +28,10 @@ console.info(
 export class NrkNewsCard extends LitElement {
   constructor() {
     super();
+    moment.locale('nb');
+    this.setTimeout();
   }
+
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('nrk-news-card-editor') as LovelaceCardEditor;
   }
@@ -37,9 +40,18 @@ export class NrkNewsCard extends LitElement {
     return {};
   }
 
+  private setTimeout(): void {
+    setTimeout(() => {
+      this.nextEntry();
+      console.log('*** this.entryNumber', this._entryNumber);
+      this.setTimeout();
+    }, 15000);
+  }
+
   // TODO Add any properities that should cause your element to re-render here
   @property() public hass?: HomeAssistant;
   @property() private _config?: NrkNewsCardConfig;
+  @property() private _entryNumber = 0;
 
   public setConfig(config: NrkNewsCardConfig): void {
     // TODO Check for required fields and that they are of the proper format
@@ -61,7 +73,6 @@ export class NrkNewsCard extends LitElement {
     return hasConfigOrEntityChanged(this, changedProps, false);
   }
 
-  protected entryNumber = 0;
   protected state;
 
   protected render(): TemplateResult | void {
@@ -69,7 +80,7 @@ export class NrkNewsCard extends LitElement {
       return html``;
     }
     this.state = this.hass.states[this._config.entity];
-    const entry = this.state.attributes.entries[this.entryNumber];
+    const entry = this.state.attributes.entries[this._entryNumber];
 
     // TODO Check for stateObj or other necessary things and render a warning if missing
     if (this._config.show_warning) {
@@ -80,14 +91,9 @@ export class NrkNewsCard extends LitElement {
       `;
     }
 
-    setTimeout(() => {
-      this.nextEntry();
-      console.log('*** this.entryNumber', this.entryNumber);
-      this.requestUpdate();
-    }, 15000);
+    console.log('*** render');
 
     //console.log('***', entry);
-    moment.locale('nb');
 
     return html`
       <ha-card
@@ -128,22 +134,15 @@ export class NrkNewsCard extends LitElement {
   }
 
   private nextEntry(): void {
-    if (this.entryNumber >= this.state.attributes.entries.length - 1) {
-      this.entryNumber = 0;
+    if (this._entryNumber >= this.state.attributes.entries.length - 1) {
+      this._entryNumber = 0;
     } else {
-      this.entryNumber++;
+      this._entryNumber++;
     }
   }
 
-  private _handleAction(ev: ActionHandlerEvent): void {
-    console.log('*** _handleAction');
-
+  private _handleAction(): void {
     this.nextEntry();
-    this.requestUpdate();
-
-    if (this.hass && this._config && ev.detail.action) {
-      //handleAction(this, this.hass, this._config, ev.detail.action);
-    }
   }
 
   static get styles(): CSSResult {
